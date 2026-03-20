@@ -37,8 +37,8 @@ export const agentsApi = {
     }),
 
   // Agent workspace files
-  listAgentFiles: (agentId: string) =>
-    request<MdFileInfo[]>(`/agents/${agentId}/files`),
+  listAgentFiles: (agentId: string, all: boolean = false) =>
+    request<MdFileInfo[]>(`/agents/${agentId}/files${all ? "?all=true" : ""}`),
 
   readAgentFile: (agentId: string, filename: string) =>
     request<MdFileContent>(

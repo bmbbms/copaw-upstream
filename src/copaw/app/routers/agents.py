@@ -302,10 +302,11 @@ async def delete_agent(
     "/{agentId}/files",
     response_model=list[MdFileInfo],
     summary="List agent workspace files",
-    description="List all markdown files in agent's workspace",
+    description="List files in agent's workspace",
 )
 async def list_agent_files(
     agentId: str = PathParam(...),
+    all: bool = False,
     request: Request = None,
 ) -> list[MdFileInfo]:
     """List agent workspace files."""
@@ -319,9 +320,10 @@ async def list_agent_files(
     workspace_manager = AgentMdManager(str(workspace.workspace_dir))
 
     try:
+        source = workspace_manager.list_all_working_files() if all else workspace_manager.list_working_mds()
         files = [
             MdFileInfo.model_validate(file)
-            for file in workspace_manager.list_working_mds()
+            for file in source
         ]
         return files
     except Exception as e:

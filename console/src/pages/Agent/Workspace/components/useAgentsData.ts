@@ -25,6 +25,7 @@ export const useAgentsData = () => {
   const [loading, setLoading] = useState(false);
   const [workspacePath, setWorkspacePath] = useState<string | null>(null);
   const [enabledFiles, setEnabledFiles] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<"core" | "all">("core");
 
   useEffect(() => {
     const initializeData = async () => {
@@ -69,7 +70,7 @@ export const useAgentsData = () => {
     };
     initializeData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAgent]);
+  }, [selectedAgent, viewMode]);
 
   // Re-sort when enabledFiles changes (for toggle/reorder operations)
   useEffect(() => {
@@ -128,7 +129,7 @@ export const useAgentsData = () => {
         ? latestEnabledFiles
         : await fetchEnabledFiles();
       // Use agent-specific API
-      const fileList = await agentsApi.listAgentFiles(selectedAgent);
+      const fileList = await agentsApi.listAgentFiles(selectedAgent, viewMode === "all");
       const sortedFiles = sortFilesByEnabled(
         fileList as unknown as MarkdownFile[],
         enabled,
@@ -258,7 +259,7 @@ export const useAgentsData = () => {
       console.error("Failed to update system prompt files", error);
       message.error(
         t("workspace.configUpdateFailed") ||
-          "Failed to update system prompt configuration",
+        "Failed to update system prompt configuration",
       );
     }
   };
@@ -285,6 +286,8 @@ export const useAgentsData = () => {
     workspacePath,
     hasChanges,
     enabledFiles,
+    viewMode,
+    setViewMode,
     setFileContent,
     fetchFiles,
     fetchDailyMemories,

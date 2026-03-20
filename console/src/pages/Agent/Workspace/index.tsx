@@ -18,6 +18,8 @@ export default function WorkspacePage() {
     workspacePath,
     hasChanges,
     enabledFiles,
+    viewMode,
+    setViewMode,
     setFileContent,
     fetchFiles,
     handleFileClick,
@@ -146,6 +148,8 @@ export default function WorkspacePage() {
           expandedMemory={expandedMemory}
           workspacePath={workspacePath}
           enabledFiles={enabledFiles}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
           onRefresh={fetchFiles}
           onFileClick={handleFileClick}
           onDailyMemoryClick={handleDailyMemoryClick}
