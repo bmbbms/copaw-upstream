@@ -15,7 +15,7 @@ const getParentDir = (filePath: string): string => {
 
 export const useAgentsData = () => {
   const { t } = useTranslation();
-  const { selectedAgent } = useAgentStore();
+  const { selectedAgent, agents } = useAgentStore();
   const [files, setFiles] = useState<MarkdownFile[]>([]);
   const [selectedFile, setSelectedFile] = useState<MarkdownFile | null>(null);
   const [dailyMemories, setDailyMemories] = useState<DailyMemoryFile[]>([]);
@@ -276,6 +276,9 @@ export const useAgentsData = () => {
 
   const hasChanges = fileContent !== originalContent;
 
+  const currentAgent = agents.find((a) => a.id === selectedAgent);
+  const effectiveWorkspacePath = currentAgent?.workspace_dir || workspacePath;
+
   return {
     files,
     selectedFile,
@@ -283,7 +286,7 @@ export const useAgentsData = () => {
     expandedMemory,
     fileContent,
     loading,
-    workspacePath,
+    workspacePath: effectiveWorkspacePath,
     hasChanges,
     enabledFiles,
     viewMode,
