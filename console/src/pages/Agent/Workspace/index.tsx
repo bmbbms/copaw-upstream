@@ -28,6 +28,7 @@ export default function WorkspacePage() {
     handleReset,
     handleToggleFileEnabled,
     handleReorderFiles,
+    handleDownloadSelected,
   } = useAgentsData();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -155,6 +156,7 @@ export default function WorkspacePage() {
           onDailyMemoryClick={handleDailyMemoryClick}
           onToggleEnabled={handleToggleFileEnabled}
           onReorder={handleReorderFiles}
+          onDownloadSelected={handleDownloadSelected}
         />
 
         <FileEditor

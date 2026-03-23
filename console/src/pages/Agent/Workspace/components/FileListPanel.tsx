@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Button, Card, Input } from "@agentscope-ai/design";
-import { Segmented } from "antd";
+import { Segmented, Checkbox } from "antd";
 import { ReloadOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   DndContext,
@@ -36,6 +36,7 @@ interface FileListPanelProps {
   onDailyMemoryClick: (daily: DailyMemoryFile) => void;
   onToggleEnabled: (filename: string) => void;
   onReorder: (newOrder: string[]) => void;
+  onDownloadSelected?: (files: string[]) => void;
 }
 
 export const FileListPanel: React.FC<FileListPanelProps> = ({
@@ -52,9 +53,29 @@ export const FileListPanel: React.FC<FileListPanelProps> = ({
   onDailyMemoryClick,
   onToggleEnabled,
   onReorder,
+  onDownloadSelected,
 }) => {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedForDownload, setSelectedForDownload] = useState<string[]>([]);
+
+  const handleSelectForDownload = (path: string, selected: boolean) => {
+    if (selected) {
+      setSelectedForDownload((prev) => Array.from(new Set([...prev, path])));
+    } else {
+      setSelectedForDownload((prev) => prev.filter((p) => p !== path));
+    }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedForDownload(files.map((f) => f.path || f.filename));
+    } else {
+      setSelectedForDownload([]);
+    }
+  };
+
+  const isAllSelected = files.length > 0 && selectedForDownload.length === files.length;
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -126,6 +147,22 @@ export const FileListPanel: React.FC<FileListPanelProps> = ({
           <p className={styles.infoText}>{t("workspace.coreFilesDesc")}</p>
         )}
 
+        {viewMode === "all" && (
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <Checkbox checked={isAllSelected} onChange={(e) => handleSelectAll(e.target.checked)}>
+              Select All
+            </Checkbox>
+            <Button 
+              size="small" 
+              type="primary" 
+              disabled={selectedForDownload.length === 0}
+              onClick={() => onDownloadSelected?.(selectedForDownload)}
+            >
+              Download ({selectedForDownload.length})
+            </Button>
+          </div>
+        )}
+
         {/* Search box */}
         <Input
           prefix={<SearchOutlined style={{ color: "#bbb" }} />}
@@ -160,6 +197,9 @@ export const FileListPanel: React.FC<FileListPanelProps> = ({
                   onFileClick={onFileClick}
                   onDailyMemoryClick={onDailyMemoryClick}
                   onToggleEnabled={onToggleEnabled}
+                  viewMode={viewMode}
+                  selectedForDownload={selectedForDownload.includes(file.path || file.filename)}
+                  onSelectForDownload={handleSelectForDownload}
                 />
               ))
             )
@@ -180,6 +220,9 @@ export const FileListPanel: React.FC<FileListPanelProps> = ({
                     onFileClick={onFileClick}
                     onDailyMemoryClick={onDailyMemoryClick}
                     onToggleEnabled={onToggleEnabled}
+                    viewMode={viewMode}
+                    selectedForDownload={selectedForDownload.includes(file.path || file.filename)}
+                    onSelectForDownload={handleSelectForDownload}
                   />
                 );
               })}
@@ -196,6 +239,9 @@ export const FileListPanel: React.FC<FileListPanelProps> = ({
                   onFileClick={onFileClick}
                   onDailyMemoryClick={onDailyMemoryClick}
                   onToggleEnabled={onToggleEnabled}
+                  viewMode={viewMode}
+                  selectedForDownload={selectedForDownload}
+                  onSelectForDownload={handleSelectForDownload}
                 />
               ))}
             </>
@@ -223,6 +269,9 @@ export const FileListPanel: React.FC<FileListPanelProps> = ({
                       onFileClick={onFileClick}
                       onDailyMemoryClick={onDailyMemoryClick}
                       onToggleEnabled={onToggleEnabled}
+                      viewMode={viewMode}
+                      selectedForDownload={selectedForDownload.includes(file.path || file.filename)}
+                      onSelectForDownload={handleSelectForDownload}
                     />
                   );
                 })}

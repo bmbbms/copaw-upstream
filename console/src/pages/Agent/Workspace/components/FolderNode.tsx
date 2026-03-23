@@ -15,6 +15,9 @@ interface FolderNodeProps {
   onFileClick: (file: MarkdownFile) => void;
   onDailyMemoryClick: (daily: DailyMemoryFile) => void;
   onToggleEnabled: (filename: string) => void;
+  viewMode?: "core" | "all";
+  selectedForDownload?: string[];
+  onSelectForDownload?: (path: string, selected: boolean) => void;
 }
 
 export const FolderNode: React.FC<FolderNodeProps> = ({
@@ -27,6 +30,9 @@ export const FolderNode: React.FC<FolderNodeProps> = ({
   onFileClick,
   onDailyMemoryClick,
   onToggleEnabled,
+  viewMode = "core",
+  selectedForDownload = [],
+  onSelectForDownload,
 }) => {
   const [open, setOpen] = useState(true);
 
@@ -74,6 +80,9 @@ export const FolderNode: React.FC<FolderNodeProps> = ({
               onFileClick={onFileClick}
               onDailyMemoryClick={onDailyMemoryClick}
               onToggleEnabled={onToggleEnabled}
+              viewMode={viewMode}
+              selectedForDownload={selectedForDownload.includes(file.path)}
+              onSelectForDownload={onSelectForDownload}
             />
           ))}
 
@@ -90,6 +99,9 @@ export const FolderNode: React.FC<FolderNodeProps> = ({
               onFileClick={onFileClick}
               onDailyMemoryClick={onDailyMemoryClick}
               onToggleEnabled={onToggleEnabled}
+              viewMode={viewMode}
+              selectedForDownload={selectedForDownload}
+              onSelectForDownload={onSelectForDownload}
             />
           ))}
         </div>

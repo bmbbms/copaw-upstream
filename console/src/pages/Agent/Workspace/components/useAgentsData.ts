@@ -274,6 +274,19 @@ export const useAgentsData = () => {
     }
   };
 
+  const handleDownloadSelected = async (paths: string[]) => {
+    try {
+      setLoading(true);
+      await agentsApi.downloadSelectedFiles(selectedAgent, paths);
+      message.success(t("workspace.downloadSuccess", "Download started"));
+    } catch (e) {
+      console.error("Failed to download files", e);
+      message.error(t("workspace.downloadFailed", "Download failed"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const hasChanges = fileContent !== originalContent;
 
   const currentAgent = agents.find((a) => a.id === selectedAgent);
@@ -300,5 +313,6 @@ export const useAgentsData = () => {
     handleReset,
     handleToggleFileEnabled,
     handleReorderFiles,
+    handleDownloadSelected,
   };
 };
