@@ -64,6 +64,9 @@ class AgentMdManager:
             "sessions",
             "active_skills",
             "customized_skills",
+            "file_store",
+            "dialog",
+            "embedding_cache",
             "__pycache__",
             ".git",
         }
