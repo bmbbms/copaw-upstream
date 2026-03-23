@@ -59,6 +59,7 @@ class AgentMdManager:
                 - created_time: file creation timestamp
                 - modified_time: file modification timestamp
         """
+        import os
         exclude_dirs = {
             "memory",
             "sessions",
@@ -71,26 +72,28 @@ class AgentMdManager:
             ".git",
         }
         result = []
-        for f in self.working_dir.rglob("*"):
-            if f.is_file():
-                # Exclude if any parent folder relative to working_dir is in exclude_dirs
-                parts = f.relative_to(self.working_dir).parts
-                if any(part in exclude_dirs for part in parts):
+        for root, dirs, files in os.walk(self.working_dir):
+            dirs[:] = [d for d in dirs if d not in exclude_dirs]
+            root_path = Path(root)
+            for file_name in files:
+                f = root_path / file_name
+                try:
+                    stat = f.stat()
+                    result.append(
+                        {
+                            "filename": f.name,
+                            "size": stat.st_size,
+                            "path": str(f),
+                            "created_time": datetime.fromtimestamp(
+                                stat.st_ctime,
+                            ).isoformat(),
+                            "modified_time": datetime.fromtimestamp(
+                                stat.st_mtime,
+                            ).isoformat(),
+                        },
+                    )
+                except OSError:
                     continue
-                stat = f.stat()
-                result.append(
-                    {
-                        "filename": f.name,
-                        "size": stat.st_size,
-                        "path": str(f),
-                        "created_time": datetime.fromtimestamp(
-                            stat.st_ctime,
-                        ).isoformat(),
-                        "modified_time": datetime.fromtimestamp(
-                            stat.st_mtime,
-                        ).isoformat(),
-                    },
-                )
         return result
 
     def read_working_md(self, md_name: str) -> str:
