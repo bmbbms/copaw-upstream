@@ -38,7 +38,7 @@ export const useAgentsData = () => {
       setExpandedMemory(false);
 
       const enabled = await fetchEnabledFiles();
-      const fileList = await agentsApi.listAgentFiles(selectedAgent);
+      const fileList = await agentsApi.listAgentFiles(selectedAgent, viewMode === "all");
       const sortedFiles = sortFilesByEnabled(
         fileList as unknown as MarkdownFile[],
         enabled,
