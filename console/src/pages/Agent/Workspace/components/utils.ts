@@ -7,7 +7,10 @@ export const formatFileSize = (bytes: number): string => {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 };
 
-export const formatTimeAgo = (timestamp: number): string => {
+export const formatTimeAgo = (time: number | string | undefined): string => {
+  if (!time) return "unknown time";
+  const timestamp = typeof time === "string" ? new Date(time).getTime() : time;
+  if (isNaN(timestamp)) return "unknown time";
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
   if (seconds < 60) return "just now";
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
